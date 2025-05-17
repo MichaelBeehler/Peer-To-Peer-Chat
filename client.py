@@ -7,10 +7,7 @@ def recieve_msg (sock):
     while True:
         try: 
             msg = sock.recv(1024).decode(ENCODING)
-            if msg == "USERNAME":
-                sock.send(input("Choose a username: ").encode(ENCODING))
-            else:
-                print(msg)
+            print(msg)
 
         except:
             print ("Disconnected from Server")
@@ -31,6 +28,12 @@ def main ():
 
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.connect((host, port))
+
+    msg = sock.recv(1024).decode(ENCODING)
+
+    if msg == "USERNAME":
+        username = input("Enter your Username: ")
+        sock.send(username.encode(ENCODING))
 
     threading.Thread(target=recieve_msg, args=(sock,), daemon=True).start()
     send_msg(sock)
