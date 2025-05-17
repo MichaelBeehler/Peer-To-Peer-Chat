@@ -1,5 +1,6 @@
 import socket
 import threading
+from datetime import datetime
 
 ENCODING = 'utf-8'
 
@@ -7,18 +8,37 @@ def recieve_msg (sock):
     while True:
         try: 
             msg = sock.recv(1024).decode(ENCODING)
-            print(msg)
+            if not msg:
+                print ("User has left the chat.")
+                break
+            
+            timeStamp = datetime.now().strftime("[%H:%M:%S]")
+            print(f"{timeStamp} {msg}")
 
         except:
-            print ("Disconnected from Server")
-            sock.close()
             break
+
 
 def send_msg (sock):
     while True:
         try:
             msg = input()
-            sock.send(msg.encode(ENCODING))
+
+            if msg.startswith("/"):
+
+                if msg.strip() == "/exit":
+
+                    print("Exiting chat...")
+                    sock.close()
+                    break
+
+                else:
+                    print("Unknown command. Type /exit to quit.")
+
+            else:
+                sock.send(msg.encode(ENCODING))
+                timeStamp = datetime.now().strftime("[%H:%M:%S]")
+                print(f"{timeStamp} You: {msg}")
         except:
             break
 
